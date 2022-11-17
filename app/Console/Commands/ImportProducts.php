@@ -104,6 +104,11 @@ class ImportProducts extends Command
         $this->warn("Importação única",);
         $body = $respose->json();
 
+        if(!isset($body['title'])){
+            $this->error("Produto inexistente na API externa");
+            return Command::FAILURE;
+        }
+
         if (Product::query()->where('name', $body['title'])->count() > 0) {
             $this->error("Produto duplicado: " . $body['title']);
             return Command::FAILURE;
