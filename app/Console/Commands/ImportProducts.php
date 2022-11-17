@@ -60,6 +60,9 @@ class ImportProducts extends Command
         return $this->importaLote($respose);
     }
 
+
+    #region Actions
+
     /**
      * Importa produtos da API externa em Lote
      *
@@ -131,4 +134,5 @@ class ImportProducts extends Command
         $this->line("Importação Finalizada");
         return Command::SUCCESS;
     }
+    #endregion
 }
