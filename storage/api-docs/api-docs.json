@@ -1,0 +1,276 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Adoorei",
+        "description": "Documentação com todos os métodos de acesso à API da prova de avaliação",
+        "contact": {
+            "email": "irwingcg@gmail.com"
+        },
+        "version": "1.0.0"
+    },
+    "servers": [
+        {
+            "url": "http://localhost:8000"
+        }
+    ],
+    "paths": {
+        "/api/products": {
+            "get": {
+                "tags": [
+                    "Produtos"
+                ],
+                "summary": "Listar todos os produtos",
+                "responses": {
+                    "200": {
+                        "description": "Ok"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Produtos"
+                ],
+                "summary": "Adicona um novo produto",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "name": {
+                                        "type": "string"
+                                    },
+                                    "price": {
+                                        "type": "number",
+                                        "format": "float"
+                                    },
+                                    "description": {
+                                        "type": "string"
+                                    },
+                                    "category": {
+                                        "type": "string"
+                                    },
+                                    "image_url": {
+                                        "type": "url"
+                                    }
+                                },
+                                "type": "object",
+                                "example": {
+                                    "name": "Blusa Feminina",
+                                    "price": 15.85,
+                                    "description": "Blusa Feminina tamanho G",
+                                    "category": "Roupas",
+                                    "image_url": "http://site.com/imagem.jpg"
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/api/products/{id}": {
+            "get": {
+                "tags": [
+                    "Produtos"
+                ],
+                "summary": "Mostrar um produto",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID do produto",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "400": {
+                        "description": "Produto Inexistente"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Produtos"
+                ],
+                "summary": "Editar um produto",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID do produto",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "name": {
+                                        "type": "string"
+                                    },
+                                    "price": {
+                                        "type": "number",
+                                        "format": "float"
+                                    },
+                                    "description": {
+                                        "type": "string"
+                                    },
+                                    "category": {
+                                        "type": "string"
+                                    },
+                                    "image_url": {
+                                        "type": "url"
+                                    }
+                                },
+                                "type": "object",
+                                "example": {
+                                    "name": "Blusa Masculina",
+                                    "price": 35.5,
+                                    "description": "Blusa Masculina tamanho P",
+                                    "category": "Roupas",
+                                    "image_url": "http://site.com/imagem.jpg"
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "400": {
+                        "description": "Produto Inexistente"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Produtos"
+                ],
+                "summary": "Excluir um produto",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID do produto",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "400": {
+                        "description": "Produto Inexistente"
+                    }
+                }
+            }
+        },
+        "/api/search/namecategory/{name}/{category}": {
+            "get": {
+                "tags": [
+                    "Busca"
+                ],
+                "summary": "Buscar um produto por nome e categoria",
+                "parameters": [
+                    {
+                        "name": "name",
+                        "in": "path",
+                        "description": "Nome do produto",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "category",
+                        "in": "path",
+                        "description": "Categoria do produto",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "400": {
+                        "description": "Nenhum produto encontrado"
+                    }
+                }
+            }
+        },
+        "/api/search/category/{category}": {
+            "get": {
+                "tags": [
+                    "Busca"
+                ],
+                "summary": "Buscar um produto por categoria",
+                "parameters": [
+                    {
+                        "name": "category",
+                        "in": "path",
+                        "description": "Categoria do produto",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "400": {
+                        "description": "Nenhum produto encontrado"
+                    }
+                }
+            }
+        },
+        "/api/search/withimage": {
+            "get": {
+                "tags": [
+                    "Busca"
+                ],
+                "summary": "Buscar produtos com imagem",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/api/search/withoutimage": {
+            "get": {
+                "tags": [
+                    "Busca"
+                ],
+                "summary": "Buscar produtos sem imagem",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        }
+    }
+}
