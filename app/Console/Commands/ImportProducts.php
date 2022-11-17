@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use App\Models\Product;
 use Illuminate\Console\Command;
+use Illuminate\Http\Client\Response;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 
@@ -14,7 +15,7 @@ class ImportProducts extends Command
      *
      * @var string
      */
-    protected $signature = 'products:import {--id=}';
+    protected $signature = 'products:import {--id= : Id do produto}';
 
     /**
      * The console command description.
@@ -40,12 +41,10 @@ class ImportProducts extends Command
      */
     public function handle()
     {
-
         // Limpa Tabela
         //DB::statement("truncate products");
 
         $id = ($this->option('id')) ?: null;
-
         $respose = Http::get('https://fakestoreapi.com/products/' . $id);
 
 
@@ -54,44 +53,21 @@ class ImportProducts extends Command
             return Command::FAILURE;
         }
 
-
-        /*
-         * Importação Única
-         */
         if ($id) {
-            $this->warn("Importação única",);
-            $body = $respose->json();
-
-            if (Product::query()->where('name', $body['title'])->count() > 0) {
-
-                $this->error("Produto duplicado: " . $body['title']);
-                return Command::FAILURE;
-
-            } else {
-
-                if (Product::query()->create([
-                    "name" => $body['title'],
-                    "price" => $body['price'],
-                    "category" => $body['category'],
-                    "description" => $body['description'],
-                    "image_url" => $body['image'],
-                ])) {
-                    $this->info("Produto Salvo: " . $body['title']);
-                } else {
-                    $this->error("Erro ao salvar o produto: " . $body['title']);
-                }
-
-            }
-
-            $this->line("Importação Finalizada");
-
-            return Command::SUCCESS;
+            return $this->importaUnico($respose);
         }
 
+        return $this->importaLote($respose);
+    }
 
-        /*
-         * Importação Em Lote
-         */
+    /**
+     * Importa produtos da API externa em Lote
+     *
+     * @param Response $respose
+     * @return int
+     */
+    protected function importaLote(Response $respose): int
+    {
         $this->warn("Importação em lote");
 
         foreach ($respose->json() as $body) {
@@ -112,6 +88,39 @@ class ImportProducts extends Command
                 }
             }
 
+        }
+
+        $this->line("Importação Finalizada");
+        return Command::SUCCESS;
+    }
+
+    /**
+     * Importa produto único de API externa
+     * @param Response $respose
+     * @return int
+     */
+    protected function importaUnico(Response $respose): int
+    {
+        $this->warn("Importação única",);
+        $body = $respose->json();
+
+        if (Product::query()->where('name', $body['title'])->count() > 0) {
+            $this->error("Produto duplicado: " . $body['title']);
+            return Command::FAILURE;
+        }
+
+        $productAdd = Product::query()->create([
+            "name" => $body['title'],
+            "price" => $body['price'],
+            "category" => $body['category'],
+            "description" => $body['description'],
+            "image_url" => $body['image'],
+        ]);
+
+        if ($productAdd) {
+            $this->info("Produto Salvo: " . $body['title']);
+        } else {
+            $this->error("Erro ao salvar o produto: " . $body['title']);
         }
 
         $this->line("Importação Finalizada");
