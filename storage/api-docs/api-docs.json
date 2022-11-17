@@ -59,7 +59,7 @@
                                     "price": 15.85,
                                     "description": "Blusa Feminina tamanho G",
                                     "category": "Roupas",
-                                    "image_url": "http://site.com/imagem.jpg"
+                                    "image_url": "https://site.com/imagem.jpg"
                                 }
                             }
                         }
@@ -142,7 +142,7 @@
                                     "price": 35.5,
                                     "description": "Blusa Masculina tamanho P",
                                     "category": "Roupas",
-                                    "image_url": "http://site.com/imagem.jpg"
+                                    "image_url": "https://site.com/imagem.jpg"
                                 }
                             }
                         }

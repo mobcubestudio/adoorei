@@ -83,8 +83,8 @@ class ImportProducts extends Command
 
             }
 
-
             $this->line("Importação Finalizada");
+
             return Command::SUCCESS;
         }
 
@@ -99,7 +99,7 @@ class ImportProducts extends Command
             if (Product::query()->where('name', $body['title'])->count() > 0) {
                 $this->error("Produto duplicado: " . $body['title']);
             } else {
-                if (Product::query()->findOrNew([
+                if (Product::query()->create([
                     "name" => $body['title'],
                     "price" => $body['price'],
                     "category" => $body['category'],

@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\ProductRequest;
 use App\Models\Product;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 
 /**
  * @OA\Info(
@@ -60,7 +59,7 @@ use Illuminate\Http\Request;
  *                     property="image_url",
  *                     type="url"
  *                 ),
- *                 example={"name": "Blusa Feminina", "price": 15.85, "description": "Blusa Feminina tamanho G", "category": "Roupas", "image_url": "http://site.com/imagem.jpg"}
+ *                 example={"name": "Blusa Feminina", "price": 15.85, "description": "Blusa Feminina tamanho G", "category": "Roupas", "image_url": "https://site.com/imagem.jpg"}
  *             )
  *         )
  *     ),
@@ -105,7 +104,7 @@ use Illuminate\Http\Request;
  *                     property="image_url",
  *                     type="url"
  *                 ),
- *                 example={"name": "Blusa Masculina", "price": 35.50, "description": "Blusa Masculina tamanho P", "category": "Roupas", "image_url": "http://site.com/imagem.jpg"}
+ *                 example={"name": "Blusa Masculina", "price": 35.50, "description": "Blusa Masculina tamanho P", "category": "Roupas", "image_url": "https://site.com/imagem.jpg"}
  *             )
  *         )
  *     ),
@@ -234,11 +233,11 @@ use Illuminate\Http\Request;
 class ProductController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Lista todos os produtos
      *
-     * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\Response
+     * @return JsonResponse
      */
-    public function index()
+    public function index(): JsonResponse
     {
         return response()->json([
             'data' => Product::all(),
@@ -246,12 +245,12 @@ class ProductController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Cadastra um produto
      *
-     * @param \Illuminate\Http\Request $request
-     * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\Response
+     * @param ProductRequest $request
+     * @return JsonResponse
      */
-    public function store(ProductRequest $request)
+    public function store(ProductRequest $request): JsonResponse
     {
         $insert = Product::query()->create($request->all());
 
@@ -259,73 +258,77 @@ class ProductController extends Controller
     }
 
     /**
-     * Display the specified resource.
+     * Mostra um produto
      *
      * @param int $id
-     * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\Response
+     * @return JsonResponse
      */
-    public function show(int $id)
+    public function show(int $id): ?JsonResponse
     {
         $product = Product::query()->find($id);
 
         if (!$product) {
             return response()->json('Produto inexistente', 400);
-        } else {
-            return response()->json([
-                'data' => Product::query()->find($id)
-            ]);
         }
+
+        return response()->json([
+            'data' => Product::query()->find($id)
+        ]);
     }
 
     /**
-     * Update the specified resource in storage.
+     * Editad um produto
      *
-     * @param Request $request
+     * @param ProductRequest $request
      * @param int $id
-     * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\Response
+     * @return JsonResponse
      */
-    public function update(ProductRequest $request, int $id)
+    public function update(ProductRequest $request, int $id): ?JsonResponse
     {
         $product = Product::query()->find($id);
 
         if (!$product) {
             return response()->json('Produto inexistente', 400);
-        } else {
-            $product = Product::query()
-                ->find($id)
-                ->update($request->all());
-            return response()->json([
-                'successo' => $product
-            ]);
         }
+
+
+        $product = Product::query()
+            ->find($id)
+            ->update($request->all());
+
+        return response()->json([
+            'successo' => $product
+        ]);
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Exlui um produto
      *
      * @param int $id
-     * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\Response
+     * @return JsonResponse
      */
-    public function destroy(int $id)
+    public function destroy(int $id): ?JsonResponse
     {
         $product = Product::query()->find($id);
 
         if (!$product) {
             return response()->json('Produto inexistente', 400);
-        } else {
-            return response()->json([
-                'sucesso' => Product::query()->find($id)->delete()
-            ]);
         }
+
+        return response()->json([
+            'sucesso' => Product::query()->find($id)->delete()
+        ]);
     }
 
 
     /**
+     * Busca por nome e categoria
+     *
      * @param $name
      * @param $category
      * @return JsonResponse
      */
-    public function searchNameCategory($name, $category)
+    public function searchNameCategory($name, $category): JsonResponse
     {
         $products = Product::query()
             ->where('name', $name)
@@ -334,19 +337,22 @@ class ProductController extends Controller
 
         if ($products->count() === 0) {
             return response()->json('Nenhum produto encontrado', 400);
-        } else {
-            return response()->json([
-                'data' => $products
-            ]);
         }
+
+
+        return response()->json([
+            'data' => $products
+        ]);
     }
 
 
     /**
+     * Busca por categoria
+     *
      * @param $category
      * @return JsonResponse
      */
-    public function searchCategory($category)
+    public function searchCategory($category): JsonResponse
     {
         $products = Product::query()
             ->where('category', $category)
@@ -354,18 +360,20 @@ class ProductController extends Controller
 
         if ($products->count() === 0) {
             return response()->json('Nenhum produto encontrado', 400);
-        } else {
-            return response()->json([
-                'data' => $products
-            ]);
         }
+
+        return response()->json([
+            'data' => $products
+        ]);
     }
 
 
     /**
+     * Busca produtos com imagem
+     *
      * @return JsonResponse
      */
-    public function searchWithImage()
+    public function searchWithImage(): JsonResponse
     {
         $products = Product::query()
             ->whereNotNull('image_url')
@@ -373,18 +381,20 @@ class ProductController extends Controller
 
         if ($products->count() === 0) {
             return response()->json('Nenhum produto encontrado', 400);
-        } else {
-            return response()->json([
-                'data' => $products
-            ]);
         }
+
+        return response()->json([
+            'data' => $products
+        ]);
     }
 
 
     /**
+     * Busca produtos sem imagem
+     *
      * @return JsonResponse
      */
-    public function searchWithoutImage()
+    public function searchWithoutImage(): JsonResponse
     {
         $products = Product::query()
             ->whereNull('image_url')
@@ -392,10 +402,10 @@ class ProductController extends Controller
 
         if ($products->count() === 0) {
             return response()->json('Nenhum produto encontrado', 400);
-        } else {
-            return response()->json([
-                'data' => $products
-            ]);
         }
+
+        return response()->json([
+            'data' => $products
+        ]);
     }
 }
